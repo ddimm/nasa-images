@@ -1,0 +1,22 @@
+{% extends "main/head.html"%}
+{%block result%}
+    <style>
+        table, td, th{
+            border: 1px black solid;
+        }
+    </style>
+    <p>{{meta.total_hits}}</p>
+    <a href={{meta.href}}>link to raw data</a>
+    
+    <table>    
+        {% for images in results %}
+        <tr>
+            <td>{{images.title}}</td>
+            <td>{{images.description}}</td>
+            <td>{{images.date_created}}</td>
+        </tr>
+        
+        {% endfor %}
+    </table>
+    
+{%endblock%}
