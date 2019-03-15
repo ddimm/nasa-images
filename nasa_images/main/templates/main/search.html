@@ -1,11 +1,12 @@
 {%extends "main/head.html"%}
 
 {%block search%}
-<form action="/search/" method="post">
+<form action="/search/" method="POST">
     {% csrf_token %}
-    <table>
-    {{ form.as_table}}
+    <table class="table">
+        {{form.as_table}}
+        
     </table>
-    <input type="submit" value="Go!">
+    <button type="submit" class="btn btn-primary">Go!</button>
 </form>
 {%endblock%}

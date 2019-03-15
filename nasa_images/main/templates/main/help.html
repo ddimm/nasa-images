@@ -1,0 +1,74 @@
+{%extends "main/head.html"%}
+
+{% block result %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <form action="/search/" method="POST">
+                {% csrf_token %}
+                <div class="form-group">    
+                    {{form.search.errors}}
+                    {{form.search.label_tag}}
+                    <input id="search" type="text" name="search" class="form-control" placeholder="e.g. mars, moon, apollo, etc.">
+                        
+                </div>
+                <div class="form-group">
+                    {{form.center.errors}}
+                    {{form.center.label_tag}}
+                    <input id="center" type="text" name="center" class="form-control">
+                </div>
+                <div class="form-group">
+                    {{form.keywords.errors}}
+                    {{form.keywords.label_tag}}
+                    <input class="form-control" id="keywords" type="text" name="keywords">
+                </div>
+                <div class="form-group">
+                    {{form.location.errors}}
+                    {{form.location.label_tag}}
+                    <input class="form-control" id="location" type="text" name="location">
+        
+                </div>
+                <div class="form-group">
+                    {{form.nasa_id.errors}}
+                    {{form.nasa_id.label_tag}}
+                    <input class="form-control" id="nasa_id" type="text" name="nasa_id">
+        
+                </div>
+                <div class="form-group">
+                    {{form.photographer.errors}}
+                    {{form.photographer.label_tag}}
+                    <input class="form-control" id="photographer" type="text" name="photographer">
+        
+                </div>
+                <div class="form-group">
+                    {{form.title.errors}}
+                    {{form.title.label_tag}}
+                    <input class="form-control" id="title" type="text" name="title">
+        
+                </div>
+                <div class="form-group">
+                    {{form.year_start.errors}}
+                    {{form.year_start.label_tag}}
+                    <input class="form-control" id="year_start" type="number" name="year_start">
+                </div>
+                <div class="form-group">
+                    {{form.year_end.erros}}
+                    {{form.year_end.label_tag}}
+                    <input class="form-control" id="year_end" type="number" name="year_end">
+                </div>
+                <button class="btn btn-primary" type="submit">Go!</button>
+                <button class="btn btn-primary" type="reset">Clear</button>
+            </form>
+
+        </div>
+        <div class="col">
+            <h1>Searching</h1>
+            <p>Each field of the form interfaces to Nasa's api for images. The "search" field is the only required field, but search results can be refined using the other fields.</p>
+            <p>The full search form can be found under "Search Form."</p>
+        </div>
+    </div>
+  
+    
+</div>
+
+{% endblock%}
