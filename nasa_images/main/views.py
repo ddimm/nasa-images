@@ -6,19 +6,19 @@ from .models import ImageResult, MetaResult
 from urllib import request
 import json
 from django.core.paginator import Paginator
-import django.contrib.sessions
+from random import randint
 
 
 NASA_URL="https://images-api.nasa.gov/search?"
-def getData(**kwargs):
+def getData(**kwargs): #obtain the results from the information from the form
     results=[]
     meta=None
     if len(kwargs)==0:
-        return results.append(ImageResult(description="None"))
+        return results.append(ImageResult(description="None"))#if there are no results
     else:
         url=[]
         url.append(NASA_URL)
-        
+        #go through each tag and encode it so it's url friendly
         for key in kwargs:
             if key=="search":
                 kwargs[key]=kwargs.get(key).replace(" ", "%20")
@@ -27,7 +27,7 @@ def getData(**kwargs):
                 url.append(kwargs[key])
                 url.append("&")  
                 continue
-            elif kwargs[key]!=None or kwargs[key]!="":
+            elif kwargs[key]!=None or kwargs[key]!="": #all this may be overkill, but urlencode may not give the url needed
                 if type(kwargs[key])==int:
                     url.append(key)
                     url.append("=")
@@ -35,7 +35,7 @@ def getData(**kwargs):
                     url.append("&")
                     continue
                 elif key=="year_start" and type(kwargs[key])==str:
-                    if kwargs[key]=='None':
+                    if kwargs[key]=='None': #if they form is none, we get 'None' in the string the next time
                         continue
                     else:
                         url.append(key)
@@ -52,52 +52,39 @@ def getData(**kwargs):
                         url.append("&")
                 elif type(kwargs[key])==str and kwargs[key]!="":
                     kwargs[key]=kwargs.get(key).replace(" ", "%20")
-                    
                     url.append(key)
                     url.append("=")
                     url.append(kwargs[key])
                     url.append("&")
                     continue
-                
-        
-        
-       
         page=request.urlopen("".join(url))
         x=json.load(page)
-        meta=MetaResult(**x.get("collection").get("metadata"),href=x.get("collection").get("href"))#obtain the meta data, i.e. total number of this and link to data
         for outer in x.get("collection").get("items"):
             for tag in outer.get("data"):
-                orig=None
+                orig=None #declare orig here so its scope can be used elsewhere
                 if(tag.get("media_type")=="image"):
                     try:
                         orig=json.load(request.urlopen(outer.get("href")))[0]
                     except Exception as e:
                         results.append(ImageResult(**tag, href=outer.get("href"), preview=outer.get("links")[0].get("href"),orig=None))
                     results.append(ImageResult(**tag, href=outer.get("href"), preview=outer.get("links")[0].get("href"),orig=orig)) #only append images, because that's what we want
+        meta=MetaResult(total_hits=len(results),href=x.get("collection").get("href"))#obtain the meta data, i.e. total number of this and link to data
         return results, meta
         
-       
-
-    
-
-
-
 # Create your views here.
 def home(request):
     return render(request, 'main/home.html', {"form":ImageSearch()})
 def getSearch(request):
-    
-    if(request.method=="POST"):
+    #handles the post request from the form, and subsequent get requests after
+    if(request.method=="POST"):#for the form post
         form=ImageSearch(request.POST)
-        request.session['search']=request.POST
         if form.is_valid():
-            data_set, meta=getData(**form.cleaned_data, media_type="image")
-            
+            data_set, meta=getData(**form.cleaned_data, media_type="image")#get the data from the form
             paginator=Paginator(data_set, 5)
             page=request.GET.get('page')
-            data=paginator.get_page(page)
+            data=paginator.get_page(page)#get the paginator
             
-            cont=urlencode(form.cleaned_data)
+            cont=urlencode(form.cleaned_data)#url for pages
             return render(request, "main/result.html", {"results":data, "meta": meta, "form":ImageSearch(initial=form.cleaned_data),"cont":cont})
         else:
             form = ImageSearch()
@@ -105,19 +92,20 @@ def getSearch(request):
     elif not request.method=="POST":
         
         path=request.GET.dict()
-        del path['page']
-       
-        data_set, meta=getData(**path, media_type="image")
-        paginator=Paginator(data_set, 5)
-        page=request.GET.get('page')
-        data=paginator.get_page(page)
-        cont=dict()
-        cont=urlencode(path)
-        return render(request, "main/result.html", {"results":data, "meta": meta, "form":ImageSearch(initial=path),"cont":cont})
-
-
-    return render(request, "main/search.html", {"form": ImageSearch()})
+        if 'page' in path:#check to see if the page variable there. this prevents an error from doing something like home/search
+            del path['page'] #get rid of the page variable since we don't need it anymore
+            data_set, meta=getData(**path, media_type="image")
+            paginator=Paginator(data_set, 5)
+            page=request.GET.get('page')
+            data=paginator.get_page(page)
+            cont=dict()
+            cont=urlencode(path)
+            return render(request, "main/result.html", {"results":data, "meta": meta, "form":ImageSearch(initial=path),"cont":cont})
+        else:
+            return render(request, "main/search.html", {"form": ImageSearch()})
+    return render(request, "main/search.html", {"form": ImageSearch()})    
 def help(request):
+    #for the help page
     return render(request,"main/help.html", {"form":ImageSearch()})
 
 

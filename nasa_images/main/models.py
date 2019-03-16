@@ -3,7 +3,16 @@ from django.forms import forms
 from django import forms
 # Create your models here.
 
-
+class Search(models.Model):
+    search=models.CharField(max_length=1000)
+    center=models.CharField(max_length=1000)
+    keywords=models.CharField(max_length=500)
+    location=models.CharField(max_length=500)
+    nasa_id=models.CharField(max_length=300)
+    photographer=models.CharField(max_length=300)
+    title=models.CharField(max_length=500)
+    year_start=models.IntegerField()
+    year_end=models.IntegerField()
 
 class ImageResult(models.Model):
     description=models.TextField()
