@@ -1,1 +1,1 @@
-web: python nasa-images/manage.py runserver 0.0.0.0:5000
+web: gunicorn nasa_images/nasa_images/wsgi.py
