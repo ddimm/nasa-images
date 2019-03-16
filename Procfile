@@ -1,0 +1,1 @@
+web: python nasa-images/manage.py runserver 0.0.0.0:5000
