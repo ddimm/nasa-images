@@ -1,1 +1,1 @@
-web: gunicorn nasa_images.wsgi.application
+web: gunicorn nasa_images.wsgi
