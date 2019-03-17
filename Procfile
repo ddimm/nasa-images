@@ -1,1 +1,0 @@
-web: gunicorn nasa_images.nasa_images.wsgi.application
