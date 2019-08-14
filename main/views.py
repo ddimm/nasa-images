@@ -80,7 +80,7 @@ def getData(**kwargs): #obtain the results from the information from the form
                         results.append(ImageResult(**tag, href=outer.get("href"), preview=outer.get("links")[0].get("href"),orig=None))
                     results.append(ImageResult(**tag, href=outer.get("href"), preview=outer.get("links")[0].get("href"),orig=orig)) #only append images, because that's what we want
         meta=MetaResult(total_hits=len(results),href=x.get("collection").get("href"))#obtain the meta data, i.e. total number of this and link to data
-        meta.save()
+        #meta.save()
         return results, meta
         
 # Create your views here.
