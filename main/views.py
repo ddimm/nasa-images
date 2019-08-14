@@ -2,11 +2,22 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest
 from django.utils.http import urlencode
 from .forms import ImageSearch
-from .models import ImageResult, MetaResult
+from .models import ImageResult, MetaResult, Search
 from urllib import request
 import json
 from django.core.paginator import Paginator
 from random import randint
+
+def form_to_model(form):
+    vals_to_add=dict()
+    
+    for key in form.keys():
+        if form.get(key)==None:
+            vals_to_add[key]=0
+        else:
+            vals_to_add[key]=form.get(key)
+    Search(**vals_to_add).save()
+            
 
 
 NASA_URL="https://images-api.nasa.gov/search?"
@@ -65,10 +76,11 @@ def getData(**kwargs): #obtain the results from the information from the form
                 if(tag.get("media_type")=="image"):
                     try:
                         orig=json.load(request.urlopen(outer.get("href")))[0]
-                    except Exception as e:
+                    except Exception as _:
                         results.append(ImageResult(**tag, href=outer.get("href"), preview=outer.get("links")[0].get("href"),orig=None))
                     results.append(ImageResult(**tag, href=outer.get("href"), preview=outer.get("links")[0].get("href"),orig=orig)) #only append images, because that's what we want
         meta=MetaResult(total_hits=len(results),href=x.get("collection").get("href"))#obtain the meta data, i.e. total number of this and link to data
+        meta.save()
         return results, meta
         
 # Create your views here.
@@ -79,6 +91,9 @@ def getSearch(request):
     if(request.method=="POST"):#for the form post
         form=ImageSearch(request.POST)
         if form.is_valid():
+            #Search(**form.cleaned_data).save()
+            
+            form_to_model(form.cleaned_data)
             data_set, meta=getData(**form.cleaned_data, media_type="image")#get the data from the form
             paginator=Paginator(data_set, 5)
             page=request.GET.get('page')

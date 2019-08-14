@@ -5,14 +5,14 @@ from django import forms
 
 class Search(models.Model):
     search=models.CharField(max_length=1000)
-    center=models.CharField(max_length=1000)
-    keywords=models.CharField(max_length=500)
-    location=models.CharField(max_length=500)
-    nasa_id=models.CharField(max_length=300)
-    photographer=models.CharField(max_length=300)
-    title=models.CharField(max_length=500)
-    year_start=models.IntegerField()
-    year_end=models.IntegerField()
+    center=models.CharField(max_length=1000, blank=True, null=True)
+    keywords=models.CharField(max_length=500, blank=True, null=True)
+    location=models.CharField(max_length=500, blank=True, null=True)
+    nasa_id=models.CharField(max_length=300, blank=True, null=True)
+    photographer=models.CharField(max_length=300, blank=True, null=True)
+    title=models.CharField(max_length=500, blank=True, null=True)
+    year_start=models.IntegerField(blank=True, null=True)
+    year_end=models.IntegerField(blank=True, null=True)
 
 class ImageResult(models.Model):
     description=models.TextField()
