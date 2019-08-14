@@ -93,7 +93,7 @@ def getSearch(request):
         if form.is_valid():
             #Search(**form.cleaned_data).save()
             
-            form_to_model(form.cleaned_data)
+           # form_to_model(form.cleaned_data)
             data_set, meta=getData(**form.cleaned_data, media_type="image")#get the data from the form
             paginator=Paginator(data_set, 5)
             page=request.GET.get('page')
